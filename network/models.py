@@ -1,4 +1,5 @@
 from django.db import models
+from .validators import validate_debt, validate_product_release_date
 
 
 class NetworkNode(models.Model):
@@ -11,9 +12,11 @@ class NetworkNode(models.Model):
 
     level = models.IntegerField(choices=LEVEL_CHOICES, verbose_name='Уровень сети')
     supplier = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
-    debt = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    debt = models.DecimalField(max_digits=15,
+                               decimal_places=2,
+                               default=0,
+                               validators=[validate_debt])
     created_at = models.DateTimeField(auto_now_add=True)
-
     name = models.CharField(max_length=150,
                             verbose_name='Название предприятия',
                             unique=True,
@@ -48,7 +51,8 @@ class NetworkNode(models.Model):
                                      verbose_name='Модель продукта',
                                      blank=False
                                      )
-    product_release_date = models.DateField(verbose_name='Дата выхода продукта')
+    product_release_date = models.DateField(verbose_name='Дата выхода продукта',
+                                            validators=[validate_product_release_date])
 
 
     class Meta:
